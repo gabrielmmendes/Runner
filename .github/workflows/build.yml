@@ -1,0 +1,36 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [linux, windows, darwin]
+        arch: [amd64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+
+      - name: Build
+        run: |
+          mkdir -p dist
+          GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} \
+          go build -ldflags="-X github.com/gabrielmmendes/runner/internal/version.Version=dev" \
+          -o dist/runner-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-${{ matrix.os }}-${{ matrix.arch }}
+          path: dist/*
