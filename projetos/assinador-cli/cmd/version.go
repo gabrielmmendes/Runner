@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/gabrielmmendes/assinatura/internal/version"
+	"github.com/gabrielmmendes/runner/internal/version"
 	"github.com/spf13/cobra"
 )
 
