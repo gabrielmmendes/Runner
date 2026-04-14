@@ -1,4 +1,4 @@
-module github.com/gabrielmmendes/assinatura
+module github.com/gabrielmmendes/runner
 
 go 1.25
 
