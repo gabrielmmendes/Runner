@@ -17,12 +17,12 @@ public class SignatureService {
 
     public SignResponse sign(SignRequest request) throws Exception{
 
+        byte[] payload = resolvePayload(request);
+        String alias = resolveAlias(request);
+        String pin = resolvePin(request);
+
         byte[] signature =
-                cryptoService.sign(
-                        request.getData().getBytes(),
-                        request.getAlias(),
-                        request.getPin()
-                );
+                cryptoService.sign(payload, alias, pin);
 
         return SignResponse.builder()
                 .success(true)
@@ -33,6 +33,30 @@ public class SignatureService {
                 .algorithm("SHA256withRSA")
                 .build();
 
+    }
+
+    private byte[] resolvePayload(SignRequest r){
+        if(r.getData() != null){
+            return r.getData().getBytes();
+        }
+        if(r.getBundle() != null){
+            return r.getBundle().toString().getBytes();
+        }
+        return new byte[0];
+    }
+
+    private String resolveAlias(SignRequest r){
+        if(r.getAlias() != null) return r.getAlias();
+        if(r.getCryptoMaterial() != null && r.getCryptoMaterial().getIdentifier() != null){
+            return r.getCryptoMaterial().getIdentifier();
+        }
+        return "default";
+    }
+
+    private String resolvePin(SignRequest r){
+        if(r.getPin() != null) return r.getPin();
+        if(r.getCryptoMaterial() != null) return r.getCryptoMaterial().getPin();
+        return null;
     }
 
 }
