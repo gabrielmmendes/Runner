@@ -1,0 +1,21 @@
+{
+  "verification": {
+    "tsaUrl": "http://timestamp.digicert.com",
+    "checkRevocation": false
+  },
+  "trustStore": {
+    "type": "JKS",
+    "path": "",
+    "password": ""
+  },
+  "temporalPolicy": {
+    "allowedClockSkewSeconds": 300
+  },
+  "security": {
+    "requireSecureChannel": false
+  },
+  "middlewareCrypto": {
+    "library": "",
+    "slotDescription": ""
+  }
+}

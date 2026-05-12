@@ -1,1 +1,4 @@
 /.idea/
+/projetos/assinador-java/target
+/projetos/assinador-cli/assinador.jar
+/projetos/assinador-cli/assinatura.exe

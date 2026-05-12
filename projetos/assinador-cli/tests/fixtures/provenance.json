@@ -1,0 +1,66 @@
+{
+  "resourceType": "Provenance",
+  "id": "provenance-exemplo-assinatura",
+  "target": [
+    {
+      "reference": "Bundle/bundle-exemplo-assinatura"
+    }
+  ],
+  "occurred": {
+    "dateTime": "2026-05-12T00:00:00Z"
+  },
+  "recorded": "2026-05-12T00:00:00Z",
+  "reason": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActReason",
+          "code": "TREAT",
+          "display": "Treatment"
+        }
+      ]
+    }
+  ],
+  "activity": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-DataOperation",
+        "code": "CREATE",
+        "display": "create"
+      }
+    ]
+  },
+  "agent": [
+    {
+      "type": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/provenance-participant-type",
+            "code": "author",
+            "display": "Author"
+          }
+        ]
+      },
+      "who": {
+        "reference": "Practitioner/profissional-001"
+      }
+    }
+  ],
+  "signature": [
+    {
+      "type": [
+        {
+          "system": "urn:iso-astm:E1762-95:2013",
+          "code": "1.2.840.10065.1.12.1.1",
+          "display": "Author's Signature"
+        }
+      ],
+      "when": "2026-05-12T00:00:00Z",
+      "who": {
+        "reference": "Practitioner/profissional-001"
+      },
+      "sigFormat": "application/jose",
+      "targetFormat": "application/fhir+json"
+    }
+  ]
+}

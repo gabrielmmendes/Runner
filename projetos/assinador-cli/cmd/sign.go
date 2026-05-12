@@ -8,11 +8,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gabrielmmendes/runner/internal/java"
 	"github.com/gabrielmmendes/runner/internal/sign"
 	"github.com/spf13/cobra"
 )
 
 var signOpts sign.Options
+var signJar string
 
 var signCmd = &cobra.Command{
 	Use:   "sign",
@@ -38,6 +40,7 @@ func init() {
 	f.StringVar(&signOpts.ServiceURL, "service-url", "", "URL do assinador-java (default http://localhost:8080 ou env ASSINATURA_SERVICE_URL)")
 	f.StringVar(&signOpts.OutputPath, "output", "", "arquivo p/ resposta JSON (default stdout)")
 	f.IntVar(&signOpts.TimeoutSeconds, "timeout", 30, "timeout HTTP em segundos")
+	f.StringVar(&signJar, "jar", "", "caminho para assinador.jar para auto-start (ou env ASSINATURA_JAR)")
 
 	rootCmd.AddCommand(signCmd)
 }
@@ -62,6 +65,30 @@ func runSign(cmd *cobra.Command, args []string) error {
 			signOpts.ServiceURL = env
 		} else {
 			signOpts.ServiceURL = "http://localhost:8080"
+		}
+	}
+
+	if !java.IsRunning(signOpts.ServiceURL) {
+		javaPath, jErr := java.EnsureJava(os.Stderr)
+		if jErr != nil {
+			fmt.Fprintf(os.Stderr, "aviso: auto-start indisponível — %v\n", jErr)
+		} else if jarPath, jarErr := java.FindJar(signJar); jarErr != nil {
+			fmt.Fprintf(os.Stderr, "aviso: auto-start indisponível — %v\n", jarErr)
+		} else {
+			fmt.Fprintf(os.Stderr, "assinador-java offline — iniciando %s ...\n", jarPath)
+			pid, err := java.Start(java.StartOptions{
+				JavaPath: javaPath,
+				JarPath:  jarPath,
+				Port:     java.DefaultPort,
+			})
+			if err != nil {
+				return fmt.Errorf("auto-start falhou: %w", err)
+			}
+			fmt.Fprintf(os.Stderr, "aguardando assinador-java (PID=%d)...\n", pid)
+			if !java.WaitReady(signOpts.ServiceURL, 90*time.Second) {
+				return fmt.Errorf("assinador-java não respondeu em 90s — verifique logs")
+			}
+			fmt.Fprintln(os.Stderr, "assinador-java UP")
 		}
 	}
 
