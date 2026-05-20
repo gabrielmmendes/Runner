@@ -40,7 +40,7 @@
 
 ## Sprint 3 — Modo Servidor HTTP & Material Criptográfico
 
-**Progresso: ~55%**
+**Progresso: 100%**
 
 | Item | Status |
 |------|--------|
@@ -48,11 +48,11 @@
 | Detecção de instância ativa via `java.IsRunning()` antes de auto-start | ✅ |
 | HTTP client para `/sign` (`internal/sign/client.go`) | ✅ |
 | Fallback para modo local quando servidor offline | ✅ |
-| PKCS#11 via `SunPKCS11` no Java (`CryptoService` usa keypair gerado em memória) | ❌ |
-| `--port` no comando `server stop` | ❌ |
-| `--timeout` (auto-stop por inatividade) no `server start` | ❌ |
-| Graceful shutdown (SIGTERM) no servidor Java | ❌ |
-| Testes de integração CLI → HTTP → assinador.jar | ❌ |
+| PKCS#11 via `SunPKCS11` no Java (fallback in-memory quando `assinador.pkcs11.library` vazio) | ✅ |
+| `--port` no comando `server stop` | ✅ |
+| `--timeout` (auto-stop por inatividade) no `server start` | ✅ |
+| Graceful shutdown (SIGTERM) no servidor Java (`server.shutdown=graceful`) | ✅ |
+| Testes de integração CLI → HTTP → assinador.jar (`-tags=integration`) | ✅ |
 
 ---
 
@@ -91,13 +91,13 @@
 |--------|------|-----------|
 | 1 | Fundação & CI/CD | ~85% |
 | 2 | Assinatura local | ~70% |
-| 3 | Modo servidor HTTP | ~55% |
+| 3 | Modo servidor HTTP | 100% |
 | 4 | CLI simulador | 0% |
 | 5 | Segurança & observabilidade | 0% |
 
 ### Próximos passos prioritários
 
 1. Comando `validate` no CLI (Sprint 2)
-2. PKCS#11 real via `SunPKCS11` no Java (Sprint 3)
-3. Testes de integração CLI→jar e CLI→HTTP→jar (Sprints 2 e 3)
-4. SHA256SUMS + Cosign no `release.yml` (Sprint 5 — corrigir marcação incorreta no plano)
+2. Testes de integração CLI→jar local (Sprint 2)
+3. SHA256SUMS + Cosign no `release.yml` (Sprint 5 — corrigir marcação incorreta no plano)
+4. Início da Sprint 4 (CLI simulador + biblioteca compartilhada de processos)

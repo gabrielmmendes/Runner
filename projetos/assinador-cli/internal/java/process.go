@@ -199,10 +199,11 @@ func WaitReady(baseURL string, timeout time.Duration) bool {
 
 // StartOptions configures a Start call.
 type StartOptions struct {
-	JavaPath string
-	JarPath  string
-	Port     int
-	LogOut   io.Writer // nil = discard
+	JavaPath       string
+	JarPath        string
+	Port           int
+	IdleTimeoutMin int       // 0 = sem auto-stop
+	LogOut         io.Writer // nil = discard
 }
 
 // Start launches assinador.jar as a detached background process.
@@ -211,8 +212,13 @@ func Start(opts StartOptions) (pid int, err error) {
 	if opts.LogOut != nil {
 		out = opts.LogOut
 	}
-	cmd := exec.Command(opts.JavaPath, "-jar", opts.JarPath,
-		fmt.Sprintf("--server.port=%d", opts.Port))
+	args := []string{"-jar", opts.JarPath,
+		fmt.Sprintf("--server.port=%d", opts.Port)}
+	if opts.IdleTimeoutMin > 0 {
+		args = append(args,
+			fmt.Sprintf("--assinador.idle-timeout-min=%d", opts.IdleTimeoutMin))
+	}
+	cmd := exec.Command(opts.JavaPath, args...)
 	cmd.Stdout = out
 	cmd.Stderr = out
 	setSysProcAttr(cmd)
@@ -224,10 +230,14 @@ func Start(opts StartOptions) (pid int, err error) {
 }
 
 // Stop sends interrupt to the registered process and clears the PID file.
-func Stop() error {
-	pid, _, err := readPID()
+// If port > 0, only stops when registered port matches.
+func Stop(port int) error {
+	pid, regPort, err := readPID()
 	if err != nil {
 		return fmt.Errorf("nenhuma instância registrada: %w", err)
+	}
+	if port > 0 && port != regPort {
+		return fmt.Errorf("instância registrada usa porta %d, não %d", regPort, port)
 	}
 	proc, err := os.FindProcess(pid)
 	if err != nil {

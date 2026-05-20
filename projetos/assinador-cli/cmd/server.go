@@ -15,8 +15,10 @@ var serverCmd = &cobra.Command{
 }
 
 var (
-	serverJar  string
-	serverPort int
+	serverJar         string
+	serverPort        int
+	serverStopPort    int
+	serverIdleTimeout int
 )
 
 var serverStartCmd = &cobra.Command{
@@ -41,6 +43,12 @@ func init() {
 	f := serverStartCmd.Flags()
 	f.StringVar(&serverJar, "jar", "", "caminho para assinador.jar (ou env ASSINATURA_JAR)")
 	f.IntVar(&serverPort, "port", java.DefaultPort, "porta HTTP do servidor")
+	f.IntVar(&serverIdleTimeout, "timeout", 0,
+		"minutos de inatividade antes de auto-stop (0 = desativado)")
+
+	sf := serverStopCmd.Flags()
+	sf.IntVar(&serverStopPort, "port", 0,
+		"porta da instância a encerrar (0 = usa registro PID)")
 
 	serverCmd.AddCommand(serverStartCmd, serverStopCmd, serverStatusCmd)
 	rootCmd.AddCommand(serverCmd)
@@ -63,9 +71,10 @@ func runServerStart(cmd *cobra.Command, _ []string) error {
 	}
 
 	pid, err := java.Start(java.StartOptions{
-		JavaPath: javaPath,
-		JarPath:  jarPath,
-		Port:     serverPort,
+		JavaPath:       javaPath,
+		JarPath:        jarPath,
+		Port:           serverPort,
+		IdleTimeoutMin: serverIdleTimeout,
 	})
 	if err != nil {
 		return err
@@ -80,7 +89,7 @@ func runServerStart(cmd *cobra.Command, _ []string) error {
 }
 
 func runServerStop(_ *cobra.Command, _ []string) error {
-	if err := java.Stop(); err != nil {
+	if err := java.Stop(serverStopPort); err != nil {
 		return err
 	}
 	fmt.Println("assinador-java encerrado")

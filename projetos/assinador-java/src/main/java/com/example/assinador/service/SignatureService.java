@@ -18,11 +18,10 @@ public class SignatureService {
     public SignResponse sign(SignRequest request) throws Exception{
 
         byte[] payload = resolvePayload(request);
-        String alias = resolveAlias(request);
-        String pin = resolvePin(request);
+        SignRequest.CryptoMaterial material = resolveMaterial(request);
 
         byte[] signature =
-                cryptoService.sign(payload, alias, pin);
+                cryptoService.sign(payload, material);
 
         return SignResponse.builder()
                 .success(true)
@@ -45,18 +44,20 @@ public class SignatureService {
         return new byte[0];
     }
 
-    private String resolveAlias(SignRequest r){
-        if(r.getAlias() != null) return r.getAlias();
-        if(r.getCryptoMaterial() != null && r.getCryptoMaterial().getIdentifier() != null){
-            return r.getCryptoMaterial().getIdentifier();
-        }
-        return "default";
-    }
+    private SignRequest.CryptoMaterial resolveMaterial(SignRequest r){
 
-    private String resolvePin(SignRequest r){
-        if(r.getPin() != null) return r.getPin();
-        if(r.getCryptoMaterial() != null) return r.getCryptoMaterial().getPin();
-        return null;
+        if(r.getCryptoMaterial() != null){
+            return r.getCryptoMaterial();
+        }
+
+        SignRequest.CryptoMaterial fallback =
+                new SignRequest.CryptoMaterial();
+        fallback.setIdentifier(
+                r.getAlias() != null ? r.getAlias() : "default"
+        );
+        fallback.setPin(r.getPin());
+        return fallback;
+
     }
 
 }
