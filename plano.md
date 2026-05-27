@@ -36,6 +36,7 @@
 **para que** o desenvolvimento possa progredir de forma organizada e incremental.
 
 **Critérios de aceitação:**
+
 - [x] Projeto Go inicializado com `go mod init github.com/gabrielmmendes/assinatura`
 - [x] Cobra CLI instalado: `go install github.com/spf13/cobra-cli@latest`
 - [x] Estrutura de pacotes definida e documentada
@@ -49,6 +50,7 @@
 **para que** binários atualizados estejam sempre disponíveis após cada mudança.
 
 **Critérios de aceitação:**
+
 - [x] GitHub Actions configurado com workflow de build
 - [x] Cross-compilation para `windows/amd64`, `linux/amd64` e `darwin/amd64`
 - [x] Build executado a cada push na branch principal
@@ -61,10 +63,11 @@
 **para que** eu possa utilizar o sistema sem necessidade de compilação, com versionamento claro.
 
 **Critérios de aceitação:**
+
 - [x] Tags de versão seguem SemVer (ex.: `v0.1.0`)
 - [x] Workflow de release gera binários nomeados por plataforma
 - [x] Binários publicados automaticamente no GitHub Releases ao criar tag
-- [x] Nome dos artefatos segue convenção: `assinatura-<versão>-<os>-<arch>`
+- [x] Nome dos artefatos segue convenção: `assinatura-<versão>-<os>-<arch>` (.exe para Windows)
 
 ### US-02.1 — Projeto Java base (assinador.jar)
 
@@ -73,6 +76,7 @@
 **para que** eu possa testar o fluxo de assinatura sem infraestrutura criptográfica real.
 
 **Critérios de aceitação:**
+
 - [x] Projeto Java base inicializado no diretório `projetos/assinador-java`
 - [x] Interface `SignatureService` definida com métodos `sign` e `validate`
 - [x] Implementação `FakeSignatureService` retorna assinatura pré-construída para parâmetros válidos
@@ -86,11 +90,12 @@
 **para que** toda a equipe trabalhe com consistência ao longo dos sprints.
 
 **Critérios de aceitação:**
-- [ ] README raiz com visão geral do projeto, estrutura de diretórios e links para documentação
-- [ ] Estrutura `projetos/` documentada
-- [ ] Convenção de commits (ex.: Conventional Commits) definida
-- [ ] Convenção de branches (ex.: `feat/`, `fix/`, `chore/`) definida
-- [ ] ADR inicial registrando escolhas de tecnologia (Go, Java 21, Cobra)
+
+- [x] README raiz com visão geral do projeto, estrutura de diretórios e links para documentação
+- [x] Estrutura `projetos/` documentada
+- [x] Convenção de commits (ex.: Conventional Commits) definida
+- [x] Convenção de branches (ex.: `feat/`, `fix/`, `chore/`) definida
+- [x] ADR inicial registrando escolhas de tecnologia (Go, Java 21, Cobra)
 
 ---
 
@@ -107,6 +112,7 @@
 **para que** o modo HTTP (Sprint 3) possa reutilizar o mesmo schema sem retrabalho.
 
 **Critérios de aceitação:**
+
 - [ ] Schema JSON de entrada para `sign` e `validate` documentado
 - [ ] Schema JSON de saída (sucesso e erro) documentado
 - [ ] Documento de contrato versionado junto ao repositório
@@ -119,6 +125,7 @@
 **para que** eu possa solicitar operações de assinatura de forma intuitiva.
 
 **Critérios de aceitação:**
+
 - [ ] CLI aceita o comando `sign` com os parâmetros necessários
 - [ ] CLI aceita o comando `validate` com os parâmetros necessários
 - [ ] Mensagem de ajuda (`--help`) documenta os comandos e parâmetros disponíveis
@@ -132,6 +139,7 @@
 **para que** eu receba feedback imediato e claro sobre erros antes da operação ser processada.
 
 **Critérios de aceitação:**
+
 - [ ] Todos os parâmetros obrigatórios são verificados (presença e formato)
 - [ ] Mensagens de erro indicam qual parâmetro está inválido e o motivo
 - [ ] Parâmetros inválidos são rejeitados antes de qualquer processamento
@@ -144,6 +152,7 @@
 **para que** eu possa testar o fluxo de validação com feedback claro sobre parâmetros incorretos.
 
 **Critérios de aceitação:**
+
 - [ ] Parâmetros de validação são verificados (presença e formato)
 - [ ] Resultado pré-determinado (válido/inválido) retornado baseado em critérios simples
 - [ ] Mensagens de erro claras para parâmetros inválidos
@@ -156,6 +165,7 @@
 **para que** eu possa utilizar o Assinador sem instalar o Java manualmente.
 
 **Critérios de aceitação:**
+
 - [ ] Sistema verifica se JDK 21 está disponível no `PATH` ou em `~/.hubsaude/jdk/`
 - [ ] Se ausente, JDK é baixado automaticamente para a plataforma (Windows, Linux, macOS)
 - [ ] JDK baixado é armazenado em `~/.hubsaude/jdk/` para reuso
@@ -169,6 +179,7 @@
 **para que** eu possa criar e validar assinaturas sem executar comandos Java manualmente.
 
 **Critérios de aceitação:**
+
 - [ ] CLI localiza o `java` disponível (provisionado ou do sistema)
 - [ ] CLI constrói e executa o comando `java -jar assinador.jar` com parâmetros corretamente mapeados
 - [ ] Saída do assinador.jar é capturada e repassada ao usuário
@@ -182,6 +193,7 @@
 **para que** eu compreenda facilmente o resultado da assinatura ou validação.
 
 **Critérios de aceitação:**
+
 - [ ] Resultado de criação de assinatura é formatado de forma legível
 - [ ] Resultado de validação indica claramente se é válida ou inválida
 - [ ] Erros são apresentados com mensagem descritiva e orientação para correção
@@ -202,6 +214,7 @@
 **para que** o CLI possa invocá-lo via requisições HTTP no modo servidor.
 
 **Critérios de aceitação:**
+
 - [ ] `SignatureController` implementado com endpoints `POST /sign` e `POST /validate`
 - [ ] Endpoints reutilizam a mesma lógica de validação e simulação do modo CLI
 - [ ] Respostas HTTP seguem estrutura do contrato JSON definido no Sprint 2
@@ -214,6 +227,7 @@
 **para que** o assinador.jar fique disponível para requisições HTTP com menor latência.
 
 **Critérios de aceitação:**
+
 - [ ] CLI inicia o assinador.jar como processo em background na porta padrão
 - [ ] PID e porta do processo são registrados em `~/.hubsaude/` para gestão posterior
 - [ ] Feedback é exibido ao usuário confirmando que o servidor iniciou
@@ -226,6 +240,7 @@
 **para que** não sejam criadas instâncias duplicadas desnecessariamente.
 
 **Critérios de aceitação:**
+
 - [ ] CLI consulta `~/.hubsaude/` para verificar processo registrado
 - [ ] Verificação de health check HTTP confirma que o processo está respondendo
 - [ ] Se instância ativa é encontrada, CLI a reutiliza em vez de iniciar nova
@@ -238,6 +253,7 @@
 **para que** eu tenha menor latência nas operações, eliminando o overhead de cold start.
 
 **Critérios de aceitação:**
+
 - [ ] CLI envia requisições HTTP para os endpoints `/sign` e `/validate`
 - [ ] Modo servidor é utilizado por padrão quando há instância em execução
 - [ ] Fallback para modo local quando servidor não está disponível (ou via flag `--local`)
@@ -250,6 +266,7 @@
 **para que** eu tenha controle sobre os processos em execução no meu sistema.
 
 **Critérios de aceitação:**
+
 - [ ] Comando `assinatura stop` encerra o assinador.jar na porta padrão
 - [ ] Parâmetro `--port` permite especificar a porta do processo a encerrar
 - [ ] Feedback é exibido confirmando o encerramento
@@ -262,6 +279,7 @@
 **para que** recursos do sistema sejam liberados automaticamente quando não estiverem em uso.
 
 **Critérios de aceitação:**
+
 - [ ] Parâmetro `--timeout <minutos>` define tempo máximo de inatividade
 - [ ] Após o período sem requisições, assinador.jar é encerrado automaticamente
 - [ ] Mecanismo de timeout é documentado no help do CLI
@@ -273,6 +291,7 @@
 **para que** eu possa utilizar material criptográfico real ou simulado nas operações de assinatura.
 
 **Critérios de aceitação:**
+
 - [ ] Integração com PKCS#11 via provider `SunPKCS11`
 - [ ] Testes de integração utilizando SoftHSM2 (ou simulador equivalente)
 - [ ] Comportamento adequado quando dispositivo não está disponível (mensagem clara)
@@ -285,6 +304,7 @@
 **para que** requisições em andamento sejam concluídas antes do processo ser finalizado.
 
 **Critérios de aceitação:**
+
 - [ ] Servidor captura sinal `SIGTERM` e inicia sequência de encerramento
 - [ ] Requisições em curso são concluídas antes do processo ser finalizado
 - [ ] Novas requisições são rejeitadas com resposta apropriada durante o shutdown
@@ -305,6 +325,7 @@
 **para que** os CLIs `assinatura` e `simulador` não dupliquem código de PID, health check e registro.
 
 **Critérios de aceitação:**
+
 - [ ] Pacote Go extraído com funções para: registrar processo, verificar health check HTTP, encerrar processo, ler/limpar registro em `~/.hubsaude/`
 - [ ] Ambos os CLIs utilizam o pacote compartilhado
 - [ ] Testes unitários cobrem o pacote isoladamente
@@ -316,6 +337,7 @@
 **para que** a gestão do Simulador tenha interface independente e clara.
 
 **Critérios de aceitação:**
+
 - [ ] Projeto CLI `simulador` segue a mesma estrutura do CLI `assinatura`
 - [ ] Comandos `start`, `stop` e `status` definidos
 - [ ] Pipeline CI/CD gera binários multiplataforma do CLI `simulador`
@@ -328,6 +350,7 @@
 **para que** eu sempre utilize a versão atualizada sem necessidade de download manual.
 
 **Critérios de aceitação:**
+
 - [ ] CLI consulta GitHub Releases para identificar a versão mais recente do simulador.jar
 - [ ] Download automático quando simulador.jar não está disponível localmente
 - [ ] Opção `--source <url>` permite indicar URL alternativa para download
@@ -341,6 +364,7 @@
 **para que** eu possa gerenciá-lo sem conhecer os comandos Java subjacentes.
 
 **Critérios de aceitação:**
+
 - [ ] Comando `simulador start` inicia o simulador.jar
 - [ ] CLI verifica se as portas necessárias estão disponíveis antes de iniciar
 - [ ] Se o simulador.jar não estiver disponível localmente, é baixado automaticamente
@@ -353,6 +377,7 @@
 **para que** eu tenha visibilidade e controle sobre o ciclo de vida do Simulador.
 
 **Critérios de aceitação:**
+
 - [ ] Comando `simulador stop` encerra o Simulador
 - [ ] Comando `simulador status` exibe se o Simulador está em execução ou não
 - [ ] Informações de processo (PID, porta) são registradas em `~/.hubsaude/`
@@ -365,6 +390,7 @@
 **para que** eu tenha sempre a versão mais recente disponível.
 
 **Critérios de aceitação:**
+
 - [ ] Comando `assinatura update` e `simulador update` verificam e baixam nova versão do binário
 - [ ] Exibe changelog resumido da versão mais recente
 - [ ] Não substitui o binário em execução (download para arquivo temporário, troca ao concluir)
@@ -385,6 +411,7 @@
 **para que** eu possa verificar a integridade e autenticidade dos artefatos baixados.
 
 **Critérios de aceitação:**
+
 - [x] Cada release inclui arquivo `SHA256SUMS` para todos os binários
 - [x] Artefatos assinados com Cosign (identidade OIDC + transparency log)
 - [x] Cada artefato acompanhado de `.sig` e `.pem` conforme especificação
@@ -398,6 +425,7 @@
 **para que** eu tenha garantia de que o artefato não foi corrompido ou adulterado.
 
 **Critérios de aceitação:**
+
 - [ ] CLI valida checksum SHA-256 do jar após download
 - [ ] CLI valida assinatura Cosign quando certificado disponível
 - [ ] Download é rejeitado se verificação falhar, com mensagem clara
@@ -410,6 +438,7 @@
 **para que** os logs possam ser integrados a pipelines de observabilidade (ex.: Loki, ELK).
 
 **Critérios de aceitação:**
+
 - [ ] Flag `--log-format json` ativa saída em JSON estruturado
 - [ ] Campos mínimos: `timestamp`, `level`, `message`, `command`, `version`
 - [ ] Saída padrão (sem flag) permanece legível para humanos no terminal
@@ -422,6 +451,7 @@
 **para que** eu possa monitorar saúde e performance em ambientes de produção.
 
 **Critérios de aceitação:**
+
 - [ ] Endpoint `GET /metrics` disponível no servidor HTTP
 - [ ] Métricas mínimas: contagem de requisições por endpoint, latência (p50/p95/p99), uptime, erros por tipo
 - [ ] Formato compatível com Prometheus (`text/plain; version=0.0.4`)
@@ -434,6 +464,7 @@
 **para que** regressões no fluxo completo sejam detectadas automaticamente antes do merge.
 
 **Critérios de aceitação:**
+
 - [ ] Smoke tests que sobem o servidor assinador, disparam `sign` e `validate` e verificam saída
 - [ ] Smoke tests que iniciam o simulador, verificam status e encerram
 - [ ] Testes executados no CI para as três plataformas (ou via matrix strategy)
@@ -446,6 +477,7 @@
 **para que** eu possa começar a usar sem depender de suporte da equipe.
 
 **Critérios de aceitação:**
+
 - [ ] Guia de quickstart cobrindo instalação e primeiro uso em Windows, Linux e macOS
 - [ ] Referência completa de comandos e flags para ambos os CLIs
 - [ ] Guia de troubleshooting com erros comuns e soluções

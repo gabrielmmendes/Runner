@@ -2,7 +2,7 @@
 
 ## Sprint 1 — Fundação & CI/CD
 
-**Progresso: ~85%**
+**Progresso: 100%**
 
 | Item | Status |
 |------|--------|
@@ -13,9 +13,9 @@
 | Endpoints `/api/sign` e `/api/validate` no Java | ✅ |
 | Teste de integração Java básico (`SignatureControllerTest`) | ✅ |
 | ADR inicial (`docs/adr/0001-escolhas-tecnologicas.md`) | ✅ |
-| README raiz com visão geral, estrutura e convenções | ❌ |
-| Convenção de commits e branches documentada | ❌ |
-| Nome dos artefatos seguindo `assinatura-<versão>-<os>-<arch>` | ❌ (usa `runner-*`) |
+| README raiz com visão geral, estrutura e convenções | ✅ |
+| Convenção de commits e branches documentada | ✅ |
+| Nome dos artefatos seguindo `assinatura-<versão>-<os>-<arch>` | ✅ |
 
 ---
 
@@ -89,7 +89,7 @@
 
 | Sprint | Foco | Progresso |
 |--------|------|-----------|
-| 1 | Fundação & CI/CD | ~85% |
+| 1 | Fundação & CI/CD | 100% |
 | 2 | Assinatura local | ~70% |
 | 3 | Modo servidor HTTP | 100% |
 | 4 | CLI simulador | 0% |
