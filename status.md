@@ -21,7 +21,7 @@
 
 ## Sprint 2 — Assinatura Digital Simulada (Modo Local)
 
-**Progresso: ~70%**
+**Progresso: 100%**
 
 | Item | Status |
 |------|--------|
@@ -31,10 +31,10 @@
 | Cache do JDK em `~/.hubsaude/jdk/` | ✅ |
 | Auto-start do assinador.jar no modo local | ✅ |
 | Saída JSON para stdout ou arquivo via `--output` | ✅ |
-| Comando `validate` no CLI | ❌ |
-| Contrato JSON CLI↔jar documentado | ❌ |
-| Testes de integração CLI → assinador.jar | ❌ |
-| Testes cobrindo detecção de JDK presente/ausente | ❌ |
+| Comando `validate` no CLI (`cmd/validate.go`) | ✅ |
+| Contrato JSON CLI↔jar documentado (`docs/contrato-json.md`) | ✅ |
+| Testes de integração CLI → assinador.jar (`internal/sign/integration_test.go`) | ✅ |
+| Testes cobrindo detecção de JDK presente/ausente (`internal/java/jdk_test.go`) | ✅ |
 
 ---
 
@@ -90,14 +90,12 @@
 | Sprint | Foco | Progresso |
 |--------|------|-----------|
 | 1 | Fundação & CI/CD | 100% |
-| 2 | Assinatura local | ~70% |
+| 2 | Assinatura local | 100% |
 | 3 | Modo servidor HTTP | 100% |
 | 4 | CLI simulador | 0% |
 | 5 | Segurança & observabilidade | 0% |
 
 ### Próximos passos prioritários
 
-1. Comando `validate` no CLI (Sprint 2)
-2. Testes de integração CLI→jar local (Sprint 2)
-3. SHA256SUMS + Cosign no `release.yml` (Sprint 5 — corrigir marcação incorreta no plano)
-4. Início da Sprint 4 (CLI simulador + biblioteca compartilhada de processos)
+1. SHA256SUMS + Cosign no `release.yml` (Sprint 5 — corrigir marcação incorreta no plano)
+2. Início da Sprint 4 (CLI simulador + biblioteca compartilhada de processos)

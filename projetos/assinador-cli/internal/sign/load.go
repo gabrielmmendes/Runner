@@ -10,6 +10,14 @@ import (
 	"strings"
 )
 
+func LoadData(path string) (string, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return "", fmt.Errorf("leitura de %s falhou: %w", path, err)
+	}
+	return string(raw), nil
+}
+
 func LoadResource(path, expectedType string) (json.RawMessage, error) {
 	raw, err := os.ReadFile(path)
 	if err != nil {

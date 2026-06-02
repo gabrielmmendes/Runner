@@ -110,6 +110,127 @@ func TestIntegration_Sign(t *testing.T) {
 	}
 }
 
+func TestIntegration_Sign_WithFullPayload(t *testing.T) {
+	baseURL, stop := startServer(t)
+	defer stop()
+
+	req := &SignRequest{
+		Bundle:     json.RawMessage(`{"resourceType":"Bundle","id":"full","type":"document","entry":[]}`),
+		Provenance: json.RawMessage(`{"resourceType":"Provenance","target":[{"reference":"Bundle/full"}]}`),
+		CertChain:  []string{"dGVzdA==", "dGVzdDI="},
+		Strategy:   "iat",
+		PolicyId:   "https://policy.example/full|1.0.0",
+		Timestamp:  1751500000,
+		OperationalConfig: json.RawMessage(`{
+			"verification":{"tsaUrl":"","checkRevocation":false},
+			"trustStore":{"type":"JKS","path":"","password":""},
+			"temporalPolicy":{"allowedClockSkewSeconds":300},
+			"security":{"requireSecureChannel":false},
+			"middlewareCrypto":{"library":"","slotDescription":""}
+		}`),
+		CryptoMaterial: CryptoMaterial{
+			Type:       "token",
+			Pin:        "5678",
+			Identifier: "full-key",
+		},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	resp, err := Post(ctx, baseURL, req, 30*time.Second)
+	if err != nil {
+		t.Fatalf("Post: %v", err)
+	}
+
+	var body struct {
+		Success   bool   `json:"success"`
+		Signature string `json:"signature"`
+		Algorithm string `json:"algorithm"`
+	}
+	if err := json.Unmarshal(resp, &body); err != nil {
+		t.Fatalf("unmarshal: %v — body=%s", err, string(resp))
+	}
+	if !body.Success {
+		t.Fatalf("success=false: %s", string(resp))
+	}
+	if body.Signature == "" {
+		t.Fatal("signature vazia")
+	}
+}
+
+func TestIntegration_Sign_InvalidPayload(t *testing.T) {
+	baseURL, stop := startServer(t)
+	defer stop()
+
+	req := &SignRequest{}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	_, err := Post(ctx, baseURL, req, 30*time.Second)
+	if err == nil {
+		t.Fatal("expected error for empty request")
+	}
+}
+
+func TestIntegration_Validate(t *testing.T) {
+	baseURL, stop := startServer(t)
+	defer stop()
+
+	req := &ValidateRequest{
+		Data:      `{"resourceType":"Bundle","id":"val-test"}`,
+		Signature: "dGVzdFNpZ25hdHVyZQ==",
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	resp, err := PostValidate(ctx, baseURL, req, 30*time.Second)
+	if err != nil {
+		t.Fatalf("PostValidate: %v", err)
+	}
+
+	var body struct {
+		Valid   bool   `json:"valid"`
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(resp, &body); err != nil {
+		t.Fatalf("unmarshal: %v — body=%s", err, string(resp))
+	}
+	if !body.Valid {
+		t.Fatalf("valid=false: %s", string(resp))
+	}
+	if body.Message == "" {
+		t.Fatal("message vazia")
+	}
+}
+
+func TestIntegration_Validate_EmptyFields(t *testing.T) {
+	baseURL, stop := startServer(t)
+	defer stop()
+
+	req := &ValidateRequest{
+		Data:      "",
+		Signature: "",
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	resp, err := PostValidate(ctx, baseURL, req, 30*time.Second)
+	if err != nil {
+		t.Fatalf("PostValidate: %v", err)
+	}
+
+	var body struct {
+		Valid bool `json:"valid"`
+	}
+	if err := json.Unmarshal(resp, &body); err != nil {
+		t.Fatalf("unmarshal: %v — body=%s", err, string(resp))
+	}
+}
+
 func TestIntegration_StopByPort(t *testing.T) {
 	baseURL, stop := startServer(t)
 	defer stop()

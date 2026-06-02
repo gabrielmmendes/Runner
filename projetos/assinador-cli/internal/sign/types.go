@@ -39,3 +39,16 @@ type Options struct {
 	OutputPath     string
 	TimeoutSeconds int
 }
+
+type ValidateRequest struct {
+	Data      string `json:"data"`
+	Signature string `json:"signature"`
+}
+
+type ValidateOptions struct {
+	DataPath       string
+	SignaturePath  string
+	ServiceURL     string
+	OutputPath     string
+	TimeoutSeconds int
+}

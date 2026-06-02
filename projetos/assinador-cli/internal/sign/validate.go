@@ -90,6 +90,22 @@ func Validate(opts *Options) error {
 	return nil
 }
 
+func ValidateOpts(opts *ValidateOptions) error {
+	if opts.DataPath == "" {
+		return errors.New("--data é obrigatório")
+	}
+	if _, err := os.Stat(opts.DataPath); err != nil {
+		return fmt.Errorf("--data: arquivo inacessível: %s", opts.DataPath)
+	}
+	if opts.SignaturePath == "" {
+		return errors.New("--signature é obrigatório")
+	}
+	if _, err := os.Stat(opts.SignaturePath); err != nil {
+		return fmt.Errorf("--signature: arquivo inacessível: %s", opts.SignaturePath)
+	}
+	return nil
+}
+
 func validateTsaUrl(configPath string) error {
 	raw, err := os.ReadFile(configPath)
 	if err != nil {

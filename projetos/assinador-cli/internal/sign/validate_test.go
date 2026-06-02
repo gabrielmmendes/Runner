@@ -142,3 +142,53 @@ func TestValidate_FileMissing(t *testing.T) {
 		t.Fatalf("expected file error, got %v", err)
 	}
 }
+
+// --- ValidateOpts tests ---
+
+func baseValidateOpts(t *testing.T) *ValidateOptions {
+	t.Helper()
+	dir := t.TempDir()
+	return &ValidateOptions{
+		DataPath:       writeFile(t, dir, "data.json", `{"resourceType":"Bundle"}`),
+		SignaturePath:  writeFile(t, dir, "sig.b64", "dGVzdA=="),
+		TimeoutSeconds: 30,
+	}
+}
+
+func TestValidateOpts_OK(t *testing.T) {
+	if err := ValidateOpts(baseValidateOpts(t)); err != nil {
+		t.Fatalf("expected ok, got %v", err)
+	}
+}
+
+func TestValidateOpts_MissingData(t *testing.T) {
+	o := baseValidateOpts(t)
+	o.DataPath = ""
+	if err := ValidateOpts(o); err == nil || !strings.Contains(err.Error(), "--data") {
+		t.Fatalf("expected --data error, got %v", err)
+	}
+}
+
+func TestValidateOpts_MissingSignature(t *testing.T) {
+	o := baseValidateOpts(t)
+	o.SignaturePath = ""
+	if err := ValidateOpts(o); err == nil || !strings.Contains(err.Error(), "--signature") {
+		t.Fatalf("expected --signature error, got %v", err)
+	}
+}
+
+func TestValidateOpts_DataFileNotFound(t *testing.T) {
+	o := baseValidateOpts(t)
+	o.DataPath = "/nope/missing.json"
+	if err := ValidateOpts(o); err == nil || !strings.Contains(err.Error(), "inacessível") {
+		t.Fatalf("expected file error, got %v", err)
+	}
+}
+
+func TestValidateOpts_SignatureFileNotFound(t *testing.T) {
+	o := baseValidateOpts(t)
+	o.SignaturePath = "/nope/missing.sig"
+	if err := ValidateOpts(o); err == nil || !strings.Contains(err.Error(), "inacessível") {
+		t.Fatalf("expected file error, got %v", err)
+	}
+}
