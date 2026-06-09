@@ -15,6 +15,7 @@ import (
 
 var signOpts sign.Options
 var signJar string
+var signSkipVerify bool
 
 var signCmd = &cobra.Command{
 	Use:   "sign",
@@ -41,6 +42,7 @@ func init() {
 	f.StringVar(&signOpts.OutputPath, "output", "", "arquivo p/ resposta JSON (default stdout)")
 	f.IntVar(&signOpts.TimeoutSeconds, "timeout", 30, "timeout HTTP em segundos")
 	f.StringVar(&signJar, "jar", "", "caminho para assinador.jar para auto-start (ou env ASSINATURA_JAR)")
+	f.BoolVar(&signSkipVerify, "skip-verify", false, "ignora verificação Cosign do jar (não recomendado)")
 
 	rootCmd.AddCommand(signCmd)
 }
@@ -74,6 +76,8 @@ func runSign(cmd *cobra.Command, args []string) error {
 			fmt.Fprintf(os.Stderr, "aviso: auto-start indisponível — %v\n", jErr)
 		} else if jarPath, jarErr := java.FindJar(signJar); jarErr != nil {
 			fmt.Fprintf(os.Stderr, "aviso: auto-start indisponível — %v\n", jarErr)
+		} else if vErr := verifyJar(jarPath, signSkipVerify); vErr != nil {
+			return vErr
 		} else {
 			fmt.Fprintf(os.Stderr, "assinador-java offline — iniciando %s ...\n", jarPath)
 			pid, err := java.Start(java.StartOptions{

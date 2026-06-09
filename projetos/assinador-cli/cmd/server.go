@@ -19,6 +19,7 @@ var (
 	serverPort        int
 	serverStopPort    int
 	serverIdleTimeout int
+	serverSkipVerify  bool
 )
 
 var serverStartCmd = &cobra.Command{
@@ -45,6 +46,8 @@ func init() {
 	f.IntVar(&serverPort, "port", java.DefaultPort, "porta HTTP do servidor")
 	f.IntVar(&serverIdleTimeout, "timeout", 0,
 		"minutos de inatividade antes de auto-stop (0 = desativado)")
+	f.BoolVar(&serverSkipVerify, "skip-verify", false,
+		"ignora verificação Cosign do jar (não recomendado)")
 
 	sf := serverStopCmd.Flags()
 	sf.IntVar(&serverStopPort, "port", 0,
@@ -61,6 +64,9 @@ func runServerStart(cmd *cobra.Command, _ []string) error {
 	}
 	jarPath, err := java.FindJar(serverJar)
 	if err != nil {
+		return err
+	}
+	if err := verifyJar(jarPath, serverSkipVerify); err != nil {
 		return err
 	}
 

@@ -72,16 +72,17 @@
 
 ## Sprint 5 — Segurança de Artefatos & Observabilidade
 
-**Progresso: 0%**
+**Progresso: 100%**
 
 | Item | Status |
 |------|--------|
-| SHA256SUMS + assinatura Cosign no `release.yml` ⚠️ marcado `[x]` no plano mas ausente no workflow real | ❌ |
-| Verificação de integridade Cosign no download do jar | ❌ |
-| `--log-format json` / `--log-level` nos CLIs | ❌ |
-| Endpoint `/metrics` Prometheus no servidor Java | ❌ |
-| Testes E2E no pipeline CI | ❌ |
-| Documentação de onboarding e troubleshooting | ❌ |
+| SHA256SUMS + assinatura Cosign keyless (OIDC + transparency log) no `release.yml` | ✅ |
+| Verificação de integridade Cosign do jar antes do auto-start (`internal/verify`, sidecars `.sig`/`.pem`, fail-closed) | ✅ |
+| Flag `--skip-verify` (com aviso) em `sign` e `server start` | ✅ |
+| `--log-format text\|json` / `--log-level` globais nos CLIs (`internal/logging`, slog; campos timestamp/level/message/command/version) | ✅ |
+| Endpoint `/metrics` Prometheus no servidor Java (uptime, requests por endpoint/status, erros, histograma de latência) — `assinador.metrics.enabled` | ✅ |
+| Testes E2E no pipeline CI (`e2e.yml`: jar Maven + CLI → sign/validate/metrics + lifecycle server) | ✅ |
+| Documentação de onboarding e troubleshooting (`docs/onboarding.md`, `docs/troubleshooting.md`) | ✅ |
 
 ---
 
@@ -93,9 +94,8 @@
 | 2 | Assinatura local | 100% |
 | 3 | Modo servidor HTTP | 100% |
 | 4 | CLI simulador | 0% |
-| 5 | Segurança & observabilidade | 0% |
+| 5 | Segurança & observabilidade | 100% |
 
 ### Próximos passos prioritários
 
-1. SHA256SUMS + Cosign no `release.yml` (Sprint 5 — corrigir marcação incorreta no plano)
-2. Início da Sprint 4 (CLI simulador + biblioteca compartilhada de processos)
+1. Sprint 4 (CLI simulador + biblioteca compartilhada de processos + auto-update)

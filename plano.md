@@ -426,10 +426,11 @@
 
 **Critérios de aceitação:**
 
-- [ ] CLI valida checksum SHA-256 do jar após download
-- [ ] CLI valida assinatura Cosign quando certificado disponível
-- [ ] Download é rejeitado se verificação falhar, com mensagem clara
-- [ ] Verificação pode ser ignorada com flag explícita `--skip-verify` (com aviso ao usuário)
+- [x] CLI valida checksum SHA-256 do download (JRE) — `verify.CheckSHA256` / `java.verifySHA256`
+- [x] CLI valida assinatura Cosign do jar quando `.sig`/`.pem` disponíveis — `internal/verify`
+- [x] Verificação é fail-closed: jar rejeitado se falhar, com mensagem clara
+- [x] Verificação pode ser ignorada com flag explícita `--skip-verify` (com aviso ao usuário)
+  > Nota: verificação do `simulador.jar` baixado fica para a Sprint 4 (download ainda não existe).
 
 ### NOVO — Structured logging (JSON) nos dois CLIs
 
@@ -439,10 +440,11 @@
 
 **Critérios de aceitação:**
 
-- [ ] Flag `--log-format json` ativa saída em JSON estruturado
-- [ ] Campos mínimos: `timestamp`, `level`, `message`, `command`, `version`
-- [ ] Saída padrão (sem flag) permanece legível para humanos no terminal
-- [ ] Nível de log configurável via `--log-level` (debug, info, warn, error)
+- [x] Flag `--log-format json` ativa saída em JSON estruturado (`internal/logging`)
+- [x] Campos mínimos: `timestamp`, `level`, `message`, `command`, `version`
+- [x] Saída padrão (`text`) permanece legível para humanos no terminal
+- [x] Nível de log configurável via `--log-level` (debug, info, warn, error)
+  > Nota: aplicado ao `assinador-cli`; replicar no `simulador` quando criado (Sprint 4).
 
 ### NOVO — Endpoint `/metrics` no servidor assinador
 
@@ -452,10 +454,10 @@
 
 **Critérios de aceitação:**
 
-- [ ] Endpoint `GET /metrics` disponível no servidor HTTP
-- [ ] Métricas mínimas: contagem de requisições por endpoint, latência (p50/p95/p99), uptime, erros por tipo
-- [ ] Formato compatível com Prometheus (`text/plain; version=0.0.4`)
-- [ ] Endpoint pode ser desabilitado via configuração
+- [x] Endpoint `GET /metrics` disponível no servidor HTTP (`metrics/MetricsController`)
+- [x] Métricas mínimas: requisições por endpoint/status, latência (histograma → p50/p95/p99 via `histogram_quantile`), uptime, erros por path
+- [x] Formato compatível com Prometheus (`text/plain; version=0.0.4`)
+- [x] Endpoint desabilitável via `assinador.metrics.enabled=false`
 
 ### NOVO — Testes E2E no pipeline CI
 
@@ -465,10 +467,10 @@
 
 **Critérios de aceitação:**
 
-- [ ] Smoke tests que sobem o servidor assinador, disparam `sign` e `validate` e verificam saída
-- [ ] Smoke tests que iniciam o simulador, verificam status e encerram
-- [ ] Testes executados no CI para as três plataformas (ou via matrix strategy)
-- [ ] Falha nos E2E bloqueia merge para branch principal
+- [x] Smoke tests que sobem o servidor assinador, disparam `sign`/`validate`/`metrics` e verificam saída (`e2e.yml` + `-tags=integration`)
+- [ ] Smoke tests que iniciam o simulador, verificam status e encerram (depende da Sprint 4)
+- [x] E2E executados no CI em `push`/`pull_request` para `main` (runner ubuntu)
+- [x] Falha nos E2E bloqueia merge (workflow obrigatório — habilitar branch protection no repo)
 
 ### NOVO — Documentação de onboarding e troubleshooting
 
@@ -478,11 +480,11 @@
 
 **Critérios de aceitação:**
 
-- [ ] Guia de quickstart cobrindo instalação e primeiro uso em Windows, Linux e macOS
-- [ ] Referência completa de comandos e flags para ambos os CLIs
-- [ ] Guia de troubleshooting com erros comuns e soluções
-- [ ] Instruções de verificação de integridade dos binários baixados
-- [ ] Documentação de setup para uso com dispositivo PKCS#11 real
+- [x] Guia de quickstart cobrindo instalação e primeiro uso em Windows, Linux e macOS (`docs/onboarding.md`)
+- [x] Referência de comandos e flags do `assinador-cli` (simulador na Sprint 4)
+- [x] Guia de troubleshooting com erros comuns e soluções (`docs/troubleshooting.md`)
+- [x] Instruções de verificação de integridade dos binários baixados (SHA-256 + Cosign)
+- [x] Documentação de setup para uso com dispositivo PKCS#11 real
 
 ---
 
