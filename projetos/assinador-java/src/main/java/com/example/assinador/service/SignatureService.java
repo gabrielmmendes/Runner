@@ -1,4 +1,3 @@
-
 package com.example.assinador.service;
 
 import com.example.assinador.crypto.CryptoService;
@@ -18,6 +17,11 @@ public class SignatureService {
     public SignResponse sign(SignRequest request) throws Exception{
 
         byte[] payload = resolvePayload(request);
+        if(payload.length == 0){
+            throw new IllegalArgumentException(
+                    "payload obrigatorio: informe 'bundle' ou 'data'"
+            );
+        }
         SignRequest.CryptoMaterial material = resolveMaterial(request);
 
         byte[] signature =
@@ -35,10 +39,10 @@ public class SignatureService {
     }
 
     private byte[] resolvePayload(SignRequest r){
-        if(r.getData() != null){
+        if(r.getData() != null && !r.getData().isBlank()){
             return r.getData().getBytes();
         }
-        if(r.getBundle() != null){
+        if(r.getBundle() != null && !r.getBundle().isNull()){
             return r.getBundle().toString().getBytes();
         }
         return new byte[0];
