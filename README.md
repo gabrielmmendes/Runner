@@ -6,6 +6,18 @@ O **Sistema Runner** é um trabalho prático desenvolvido para a disciplina de I
 
 O objetivo principal do sistema é facilitar o acesso à funcionalidade de execução de aplicações Java via linha de comandos, permitindo que os usuários executem essas aplicações sem a necessidade de conhecer detalhes de configuração ou instalação do ambiente Java.
 
+## 1.1. Especificação (fonte da verdade)
+
+Este repositório é uma **implementação**. A especificação e os critérios de
+avaliação vivem no repositório upstream, referenciado por **commit fixo** para
+evitar deriva:
+
+- Repositório: [`kyriosdata/runner`](https://github.com/kyriosdata/runner/tree/0cd5461481861b320b6e6d4f9af85648206cea56)
+- Critérios: [`docs/criterios.md@0cd5461`](https://github.com/kyriosdata/runner/blob/0cd5461481861b320b6e6d4f9af85648206cea56/docs/criterios.md)
+
+Não duplicamos a especificação aqui — apenas o conteúdo específico desta
+implementação.
+
 ## 2. Componentes do Sistema
 
 * **Assinatura (CLI):** Uma interface de linha de comandos simples e intuitiva, multiplataforma (Windows, Linux e macOS).
@@ -26,8 +38,9 @@ O objetivo principal do sistema é facilitar o acesso à funcionalidade de execu
 Runner/
 ├── .github/
 │   └── workflows/
-│       ├── build.yml          # CI — build multiplataforma a cada push
-│       └── release.yml        # CD — release por tag SemVer
+│       ├── build.yml          # CI — lint + testes (Linux/Windows) + build
+│       ├── e2e.yml            # CI — testes ponta a ponta (CLI → HTTP → jar)
+│       └── release.yml        # CD — release por tag SemVer (Cosign + changelog)
 ├── projetos/
 │   ├── assinador-cli/         # CLI em Go (Cobra)
 │   │   ├── cmd/               # Comandos Cobra (sign, server, version)
@@ -45,6 +58,7 @@ Runner/
 ├── planejamento.md            # Plano de execução por fases
 ├── plano.md                   # User stories organizadas por sprint
 ├── status.md                  # Status de implementação
+├── LICENSE                    # MIT
 └── README.md
 ```
 
@@ -78,6 +92,35 @@ go build -o assinatura.exe
 # Assinador JAR
 cd projetos/assinador-java
 mvn -B -DskipTests package
+```
+
+> Para builds rastreáveis (tag + SHA), o CI injeta a versão via `ldflags`.
+> Localmente: `go build -ldflags="-X github.com/gabrielmmendes/runner/internal/version.Version=$(git describe --tags --always) -X github.com/gabrielmmendes/runner/internal/version.Commit=$(git rev-parse --short HEAD)"`.
+
+### Testes
+
+```bash
+# Testes unitários do CLI (Go)
+cd projetos/assinador-cli
+go test ./...
+
+# Testes de integração (sobe assinador.jar real)
+go test -tags=integration ./internal/sign/...
+
+# Testes do assinador-java
+cd projetos/assinador-java
+mvn -B test
+```
+
+### Executar o artefato
+
+```bash
+# Conferir versão (tag + SHA curto + data de build)
+assinatura --version
+
+# Ajuda que ensina, com exemplos
+assinatura --help
+assinatura sign --help
 ```
 
 ### Comandos principais
@@ -144,12 +187,32 @@ chore(ci): update Go version to 1.25
 ### Versionamento
 
 Segue [SemVer](https://semver.org/lang/pt-BR/). Tags no formato `v<MAJOR>.<MINOR>.<PATCH>` (ex.: `v0.1.0`).
+O **changelog é gerado automaticamente** a partir dos commits/PRs em cada
+[Release do GitHub](https://github.com/gabrielmmendes/runner/releases) — não é escrito à mão.
 
 ### Artefatos
 
 Binários nomeados como `assinatura-<versão>-<os>-<arch>` (ex.: `assinatura-v0.2.0-linux-amd64`).
 
-## 8. Contexto Acadêmico
+## 8. Como Contribuir
+
+1. Abra uma issue referenciando a user story (ver `plano.md`).
+2. Crie um branch `feat/<nome>` (ou `fix/`, `docs/`, `chore/`).
+3. Garanta `go test ./...` e `go vet ./...` verdes; rode `gofmt -w .`.
+4. Abra um PR pequeno e revisável, vinculado à issue. O CI (lint + testes em
+   Linux/Windows + build) precisa passar antes do merge.
+
+## 9. Status Atual
+
+Detalhes em [`status.md`](status.md). Resumo: CLI (sign, server, validate,
+verify, version) e assinador-java operacionais; CI/CD com assinatura Cosign
+keyless. Roadmap por sprint em [`plano.md`](plano.md).
+
+## 10. Licença
+
+[MIT](LICENSE).
+
+## 11. Contexto Acadêmico
 
 |||
 |:--|:--|
