@@ -15,6 +15,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-go@v5
         with:
@@ -28,11 +30,14 @@ jobs:
         run: |
           mkdir -p dist
           VERSION=${GITHUB_REF_NAME}
+          PKG=github.com/gabrielmmendes/runner/internal/version
+          COMMIT=$(git rev-parse --short HEAD)
+          DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           for OS in linux windows darwin; do
             EXT=""
             if [ "$OS" = "windows" ]; then EXT=".exe"; fi
             GOOS=$OS GOARCH=amd64 \
-            go build -ldflags="-X github.com/gabrielmmendes/runner/internal/version.Version=$VERSION" \
+            go build -ldflags="-X $PKG.Version=$VERSION -X $PKG.Commit=$COMMIT -X $PKG.Date=$DATE" \
             -o dist/assinatura-$VERSION-$OS-amd64${EXT}
           done
 
@@ -56,3 +61,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: projetos/assinador-cli/dist/*
+          generate_release_notes: true   # changelog gerado a partir dos commits/PRs

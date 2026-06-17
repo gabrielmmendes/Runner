@@ -115,7 +115,6 @@ func findMavenJar() (string, error) {
 	return "", fmt.Errorf("jar Maven não encontrado")
 }
 
-
 func pidFilePath() (string, error) {
 	hub, err := HubDir()
 	if err != nil {

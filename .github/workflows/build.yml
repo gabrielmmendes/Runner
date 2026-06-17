@@ -3,37 +3,74 @@ name: Build
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+defaults:
+  run:
+    working-directory: projetos/assinador-cli
 
 jobs:
-  build:
+  lint:
+    name: Lint (gofmt + vet)
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Arquivos não formatados (rode gofmt -w):"; echo "$unformatted"; exit 1
+          fi
+      - name: go vet
+        run: go vet ./...
 
+  test:
+    name: Test (${{ matrix.os }})
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.25
+      - name: go test
+        run: go test ./...
+
+  build:
+    name: Build (${{ matrix.os }}/${{ matrix.arch }})
+    needs: test
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [linux, windows, darwin]
         arch: [amd64]
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
         with:
           go-version: 1.25
-
       - name: Build
-        working-directory: projetos/assinador-cli
         run: |
           mkdir -p dist
           EXT=""
           if [ "${{ matrix.os }}" = "windows" ]; then EXT=".exe"; fi
+          PKG=github.com/gabrielmmendes/runner/internal/version
+          COMMIT=$(git rev-parse --short HEAD)
+          DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} \
-          go build -ldflags="-X github.com/gabrielmmendes/runner/internal/version.Version=dev" \
+          go build -ldflags="-X $PKG.Version=dev -X $PKG.Commit=$COMMIT -X $PKG.Date=$DATE" \
           -o dist/assinatura-${{ matrix.os }}-${{ matrix.arch }}${EXT}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: assinatura-${{ matrix.os }}-${{ matrix.arch }}
           path: projetos/assinador-cli/dist/*
