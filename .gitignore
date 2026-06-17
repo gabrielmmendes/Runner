@@ -1,4 +1,19 @@
+# IDEs
 /.idea/
-/projetos/assinador-java/target
+.vscode/
+
+# Build Java (Maven)
+/projetos/assinador-java/target/
+
+# Build Go / binários do CLI
 /projetos/assinador-cli/assinador.jar
+/projetos/assinador-cli/assinatura
 /projetos/assinador-cli/assinatura.exe
+/projetos/assinador-cli/dist/
+
+# Logs de execução
+*.log
+
+# Artefatos de SO / linguagens
+.DS_Store
+__pycache__/
