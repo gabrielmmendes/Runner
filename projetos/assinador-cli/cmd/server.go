@@ -23,21 +23,24 @@ var (
 )
 
 var serverStartCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Inicia assinador.jar em background (modo servidor HTTP)",
-	RunE:  runServerStart,
+	Use:     "start",
+	Short:   "Inicia assinador.jar em background (modo servidor HTTP)",
+	Example: "  assinatura server start --port 8085\n  assinatura server start --timeout 30   # auto-stop após 30 min ociosos",
+	RunE:    runServerStart,
 }
 
 var serverStopCmd = &cobra.Command{
-	Use:   "stop",
-	Short: "Encerra instância registrada do assinador.jar",
-	RunE:  runServerStop,
+	Use:     "stop",
+	Short:   "Encerra instância registrada do assinador.jar",
+	Example: "  assinatura server stop\n  assinatura server stop --port 8085",
+	RunE:    runServerStop,
 }
 
 var serverStatusCmd = &cobra.Command{
-	Use:   "status",
-	Short: "Exibe status da instância registrada",
-	RunE:  runServerStatus,
+	Use:     "status",
+	Short:   "Exibe status da instância registrada",
+	Example: "  assinatura server status",
+	RunE:    runServerStatus,
 }
 
 func init() {

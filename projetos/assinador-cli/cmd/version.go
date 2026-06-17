@@ -8,10 +8,11 @@ import (
 )
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Exibe a versão do CLI",
+	Use:     "version",
+	Short:   "Exibe a versão do CLI (tag + SHA curto + data de build)",
+	Example: "  assinatura version\n  assinatura --version",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("assinatura version:", version.Version)
+		fmt.Println("assinatura", version.String())
 	},
 }
 

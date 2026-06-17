@@ -61,7 +61,7 @@ func Init(format Format, level slog.Level) {
 	} else {
 		h = newTextHandler(w, opts)
 	}
-	logger = slog.New(h).With(slog.String("version", version.Version))
+	logger = slog.New(h).With(slog.String("version", version.Version), slog.String("commit", version.Commit))
 }
 
 // L returns the configured logger, initializing a default text logger on first

@@ -21,7 +21,19 @@ var signCmd = &cobra.Command{
 	Use:   "sign",
 	Short: "Cria assinatura digital FHIR (caso de uso Goiás)",
 	Long:  "Envia Bundle + Provenance + cadeia de certificados ao serviço assinador-java para geração da assinatura JWS.",
-	RunE:  runSign,
+	Example: `  # Assinatura completa (PIN via prompt seguro)
+  assinatura sign \
+    --bundle bundle.json --provenance prov.json --cert-chain chain.pem \
+    --timestamp 1751328000 --strategy iat \
+    --policy-id "https://exemplo/policy|1.0.0" --config config.json \
+    --crypto-type token --pkcs11-id chave1
+
+  # PIN via variável de ambiente (CI) e saída para arquivo
+  ASSINATURA_PKCS11_PIN=1234 assinatura sign ... --output assinatura.json
+
+  # Apontar para servidor já em execução
+  assinatura sign ... --service-url http://localhost:8085`,
+	RunE: runSign,
 }
 
 func init() {
